@@ -1,7 +1,8 @@
 import os
+from typing import Generator
 
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, Session
 from dotenv import load_dotenv
 
 
@@ -15,3 +16,8 @@ SessionLocal = sessionmaker(
     autocommit=False,
     expire_on_commit=False
 )
+
+
+def get_db_session() -> Generator[Session, None, None]:
+    with SessionLocal() as session:
+        yield session
