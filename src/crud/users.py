@@ -18,3 +18,7 @@ def create_user(session: Session, user_data: UserCreateSchema) -> User:
     session.refresh(db_user)
 
     return db_user
+
+
+def get_user_by_email(session: Session, email: str) -> User | None:
+    return session.scalar(select(User).where(User.email == email))
