@@ -2,10 +2,12 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from db.models import User
+from schemas.users import UserCreateSchema
 
 
 def get_all_users(session: Session) -> list[User]:
     return list(session.scalars(select(User)).all())
+
 
 def create_user(session: Session, user_data: UserCreateSchema) -> User:
     db_user = User(
