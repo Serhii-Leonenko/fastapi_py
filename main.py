@@ -14,6 +14,7 @@ app = FastAPI()
 def list_users(db_session: Annotated[Session, Depends(get_db_session)]):
     return get_all_users(session=db_session)
 
+
 @app.post("/user/create/", response_model=schemas.UserReadSchema)
 def user_create(user_data: schemas.UserCreateSchema, db_session: Annotated[Session, Depends(get_db_session)]):
     if get_user_by_email(session=db_session, email=user_data.email):
