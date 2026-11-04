@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from sqlalchemy import String, func
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.db import Base
 
@@ -14,6 +14,12 @@ class User(Base):
     first_name: Mapped[str] = mapped_column(String(255))
     last_name: Mapped[str] = mapped_column(String(255))
     created_at: Mapped[datetime] = mapped_column(server_default=func.now())
+    projects: Mapped["Project"] = relationship("Project", back_populates="projects")
+    tasks: Mapped[list["Task"]] = relationship(
+        "Task",
+        secondary="task_assignees",
+        back_populates="assignees"
+    )
 
     @property
     def full_name(self) -> str:
