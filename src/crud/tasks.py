@@ -22,7 +22,7 @@ async def _get_assignees_by_ids(db_session: AsyncSession, assignee_ids: list[int
         for assignee in result.all()
     }
 
-    missing_assignee_ids = set(found_assignees.keys()) - set(assignee_ids)
+    missing_assignee_ids = set(assignee_ids) - set(found_assignees.keys())
     if missing_assignee_ids:
         raise AssigneeNotFoundError(
             f"Assignees with IDs: {missing_assignee_ids} not found"
