@@ -13,7 +13,7 @@ class TaskStatusEnum(StrEnum):
     DONE = "Done"
 
 
-task_assignees = Table(
+tasks_assignees = Table(
     "tasks_assignees",
     Base.metadata,
     Column(
@@ -40,6 +40,6 @@ class Task(Base):
 
     assignees: Mapped[list["User"]] = relationship(
         "User",
-        secondary="task_assignees",
+        secondary="tasks_assignees",
         back_populates="tasks"
     )

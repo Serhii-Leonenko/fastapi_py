@@ -14,10 +14,10 @@ class User(Base):
     first_name: Mapped[str] = mapped_column(String(255))
     last_name: Mapped[str] = mapped_column(String(255))
     created_at: Mapped[datetime] = mapped_column(server_default=func.now())
-    projects: Mapped["Project"] = relationship("Project", back_populates="projects")
+    projects: Mapped["Project"] = relationship("Project", back_populates="owner")
     tasks: Mapped[list["Task"]] = relationship(
         "Task",
-        secondary="task_assignees",
+        secondary="tasks_assignees",
         back_populates="assignees"
     )
 
