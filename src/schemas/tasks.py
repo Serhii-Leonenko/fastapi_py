@@ -8,6 +8,7 @@ class TaskCreateSchema(BaseModel):
     title: str
     description: str
     assignees: list[int] = Field(default_factory=list)
+    project_id: int
 
 
 class TaskReadSchema(BaseModel):

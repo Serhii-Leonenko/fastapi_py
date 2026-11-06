@@ -35,7 +35,7 @@ async def get_task_by_id(db_session: AsyncSession, task_id: int) -> Task | None:
 
 
 async def create_task(
-    db_session: AsyncSession, task_data: TaskCreateSchema, project_id: int
+    db_session: AsyncSession, task_data: TaskCreateSchema
 ) -> Task:
     task_data = task_data.model_dump()
 
@@ -47,7 +47,6 @@ async def create_task(
     task = Task(
         **task_data,
         assignees=assignees,
-        project_id=project_id,
     )
 
     db_session.add(task)
@@ -74,7 +73,7 @@ async def update_task(
         setattr(task, field, value)
 
     await db_session.commit()
-    await db_session.refresh(task)
+    await db_session.refresh(task, ["assignees"])
 
     return task
 
