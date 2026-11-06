@@ -12,9 +12,7 @@ async def get_all_users(session: AsyncSession) -> list[User]:
 
 
 async def create_user(session: AsyncSession, user_data: UserCreateSchema) -> User:
-    db_user = User(
-        **user_data.model_dump()
-    )
+    db_user = User(**user_data.model_dump())
     session.add(db_user)
     await session.commit()
     await session.refresh(db_user)

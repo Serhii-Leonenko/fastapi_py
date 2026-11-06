@@ -16,5 +16,4 @@ class ProjectReadSchema(BaseModel):
     name: str
     description: str
     owner: UserReadSchema
-    tasks: list[TaskReadSchema]
-
+    tasks: list[TaskReadSchema] | None

@@ -16,9 +16,7 @@ class User(Base):
     created_at: Mapped[datetime] = mapped_column(server_default=func.now())
     projects: Mapped["Project"] = relationship("Project", back_populates="owner")
     tasks: Mapped[list["Task"]] = relationship(
-        "Task",
-        secondary="tasks_assignees",
-        back_populates="assignees"
+        "Task", secondary="tasks_assignees", back_populates="assignees"
     )
 
     @property

@@ -18,12 +18,9 @@ async def get_projects_list(
     db_session: AsyncSession,
     owner_id: int | None = None,
 ):
-    statement = (
-        select(Project)
-        .options(
-            joinedload(Project.owner),
-            selectinload(Project.tasks).selectinload(Task.assignees),
-        )
+    statement = select(Project).options(
+        joinedload(Project.owner),
+        selectinload(Project.tasks).selectinload(Task.assignees),
     )
 
     if owner_id:
@@ -44,6 +41,6 @@ async def create_project(
     project = Project(**project_data.model_dump())
     db_session.add(project)
     await db_session.commit()
-    await db_session.refresh(project) # TODO: check if will load related objects
+    await db_session.refresh(project, ["owner", "tasks"])
 
     return project

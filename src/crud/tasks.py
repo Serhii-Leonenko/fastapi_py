@@ -13,14 +13,11 @@ class TaskNotFoundError(Exception):
     pass
 
 
-async def _get_assignees_by_ids(db_session: AsyncSession, assignee_ids: list[int]) -> list[User]:
-    result = await db_session.scalars(
-        select(User).where(User.id.in_(assignee_ids))
-    )
-    found_assignees = {
-        assignee.id: assignee
-        for assignee in result.all()
-    }
+async def _get_assignees_by_ids(
+    db_session: AsyncSession, assignee_ids: list[int]
+) -> list[User]:
+    result = await db_session.scalars(select(User).where(User.id.in_(assignee_ids)))
+    found_assignees = {assignee.id: assignee for assignee in result.all()}
 
     missing_assignee_ids = set(assignee_ids) - set(found_assignees.keys())
     if missing_assignee_ids:
@@ -32,19 +29,13 @@ async def _get_assignees_by_ids(db_session: AsyncSession, assignee_ids: list[int
 
 
 async def get_task_by_id(db_session: AsyncSession, task_id: int) -> Task | None:
-    stmt = (
-        select(Task)
-        .options(selectinload(Task.assignees))
-        .where(Task.id == task_id)
-    )
+    stmt = select(Task).options(selectinload(Task.assignees)).where(Task.id == task_id)
 
     return await db_session.scalar(stmt)
 
 
 async def create_task(
-    db_session: AsyncSession,
-    task_data: TaskCreateSchema,
-    project_id: int
+    db_session: AsyncSession, task_data: TaskCreateSchema, project_id: int
 ) -> Task:
     task_data = task_data.model_dump()
 
@@ -67,9 +58,7 @@ async def create_task(
 
 
 async def update_task(
-    db_session: AsyncSession,
-    task_id: int,
-    task_data: TaskUpdateSchema
+    db_session: AsyncSession, task_id: int, task_data: TaskUpdateSchema
 ) -> Task:
     task = await get_task_by_id(db_session, task_id)
     if not task:
