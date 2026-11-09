@@ -1,7 +1,7 @@
 from datetime import datetime
 from enum import StrEnum
 
-from sqlalchemy import Table, Column, ForeignKey, String, Text, func
+from sqlalchemy import Table, Column, ForeignKey, String, Text, func, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.db import Base
@@ -23,11 +23,14 @@ tasks_assignees = Table(
 
 class Task(Base):
     __tablename__ = "tasks"
+    __table_args__ = (
+        UniqueConstraint("project_id", "title", name="unique_task_title_per_project"),
+    )
 
     id: Mapped[int] = mapped_column(primary_key=True)
     title: Mapped[str] = mapped_column(String(200))
     description: Mapped[str] = mapped_column(Text)
-    status: Mapped[TaskStatusEnum] = mapped_column(String(20))
+    status: Mapped[TaskStatusEnum] = mapped_column(String(20), default=TaskStatusEnum.NEW)
     created_at: Mapped[datetime] = mapped_column(server_default=func.now())
     updated_at: Mapped[datetime] = mapped_column(
         server_default=func.now(), onupdate=func.now()

@@ -17,4 +17,4 @@ class Project(Base):
     owner_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
     owner: Mapped["User"] = relationship("User", back_populates="projects")
 
-    tasks: Mapped["Task"] = relationship("Task", back_populates="project")
+    tasks: Mapped[list["Task"]] = relationship("Task", back_populates="project")

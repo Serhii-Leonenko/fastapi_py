@@ -2,6 +2,7 @@ from sqlalchemy import select, delete
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 from db.models import Task, User
+from db.models.tasks import TaskStatusEnum
 from schemas.tasks import TaskCreateSchema, TaskUpdateSchema
 
 
@@ -10,6 +11,10 @@ class AssigneeNotFoundError(Exception):
 
 
 class TaskNotFoundError(Exception):
+    pass
+
+
+class TaskAlreadyExistsError(Exception):
     pass
 
 
@@ -37,6 +42,10 @@ async def get_task_by_id(db_session: AsyncSession, task_id: int) -> Task | None:
 async def create_task(
     db_session: AsyncSession, task_data: TaskCreateSchema
 ) -> Task:
+    if await db_session.scalar(
+            select(Task).where(Task.title == task_data.title, Task.project_id == task_data.project_id)):
+        raise TaskAlreadyExistsError("Task with such title for this project already exists")
+
     task_data = task_data.model_dump()
 
     assignees = []
@@ -46,12 +55,13 @@ async def create_task(
 
     task = Task(
         **task_data,
+        status=TaskStatusEnum.NEW,
         assignees=assignees,
     )
 
     db_session.add(task)
     await db_session.commit()
-    await db_session.refresh(task)
+    await db_session.refresh(task, ["assignees"])
 
     return task
 
@@ -83,6 +93,5 @@ async def delete_task(db_session: AsyncSession, task_id: int) -> None:
     if not task:
         raise TaskNotFoundError(f"Task with ID {task_id} not found")
 
-    stmt = delete(Task).where(Task.id == task_id)
-    await db_session.execute(stmt)
+    await db_session.delete(task)
     await db_session.commit()

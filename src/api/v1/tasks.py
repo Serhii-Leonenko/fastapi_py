@@ -2,7 +2,8 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
-from src.crud.tasks import create_task, update_task, delete_task, AssigneeNotFoundError, TaskNotFoundError
+from src.crud.tasks import create_task, update_task, delete_task, AssigneeNotFoundError, TaskNotFoundError, \
+    TaskAlreadyExistsError
 from src.db import get_db_session
 from src.schemas.tasks import TaskReadSchema, TaskCreateSchema, TaskUpdateSchema
 
@@ -22,6 +23,8 @@ async def create_task_endpoint(
     )
     except AssigneeNotFoundError as e:
         raise HTTPException(status_code=404, detail=str(e))
+    except TaskAlreadyExistsError as e:
+        raise HTTPException(status_code=409, detail=str(e))
 
 
 @router.patch("/tasks/{task_id}", response_model=TaskReadSchema)
