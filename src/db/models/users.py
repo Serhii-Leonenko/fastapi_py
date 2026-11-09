@@ -18,6 +18,7 @@ class User(Base):
     tasks: Mapped[list["Task"]] = relationship(
         "Task", secondary="tasks_assignees", back_populates="assignees"
     )
+    password: Mapped[str] = mapped_column(String(255))
 
     @property
     def full_name(self) -> str:

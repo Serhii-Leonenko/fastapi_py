@@ -3,6 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from db.models import User
 from schemas.users import UserCreateSchema
+from security import get_password_hash
 
 
 async def get_all_users(session: AsyncSession) -> list[User]:
@@ -12,7 +13,10 @@ async def get_all_users(session: AsyncSession) -> list[User]:
 
 
 async def create_user(session: AsyncSession, user_data: UserCreateSchema) -> User:
-    db_user = User(**user_data.model_dump())
+    user_data = user_data.model_dump()
+    password = user_data.pop("password")
+
+    db_user = User(**user_data, password=get_password_hash(password))
     session.add(db_user)
     await session.commit()
     await session.refresh(db_user)

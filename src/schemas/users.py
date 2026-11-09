@@ -7,6 +7,7 @@ class UserCreateSchema(BaseModel):
     first_name: str = Field(max_length=50)
     last_name: str = Field(max_length=50)
     email: EmailStr
+    password: str = Field(min_length=8)
 
 
 class UserReadSchema(BaseModel):

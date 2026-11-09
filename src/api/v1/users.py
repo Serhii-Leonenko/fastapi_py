@@ -16,8 +16,8 @@ async def list_users(db_session: Annotated[AsyncSession, Depends(get_db_session)
     return await get_all_users(session=db_session)
 
 
-@router.post("/users", response_model=schemas.UserReadSchema)
-async def user_create(
+@router.post("/users/register", response_model=schemas.UserReadSchema)
+async def register_user(
     user_data: schemas.UserCreateSchema,
     db_session: Annotated[AsyncSession, Depends(get_db_session)],
 ):
